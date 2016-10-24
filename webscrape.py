@@ -5,7 +5,7 @@ url = 'http://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/vfr/?
 response = requests.get(url)
 html = response.text
 soup = BeautifulSoup(html, 'lxml')
-database = soup.find(class_='striped')
+table = soup.find(class_='striped')
 
 map_data = []
 temp = open("temp", 'w+')
