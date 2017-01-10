@@ -22,13 +22,15 @@ for row in table.find_all('tr')[1:]:
 	city = col[0].string.strip()
 	link = col[1].find('a').get('href')
 	version = col[1].get_text().split()[0]
+	startdate = col[1].get_text().split()[2] + ' ' + col[1].get_text().split()[3] + ' ' + col[1].get_text().split()[4].split('G')[0]
+	enddate = col[2].get_text().split()[2] + ' ' + col[2].get_text().split()[3] + ' ' + col[2].get_text().split()[4].split('G')[0]
 
-	directory = (version+'_'+city+"_UNTILED")
+	directory = (version + '_'+city+"_UNTILED")
 	directory = "".join(e for e in directory if e.isalnum() or e == '_')
-	
+
 	if not os.path.exists(directory):
 		os.makedirs(directory)
 		url = urlopen(link)
-		ZipFile(StringIO(url.read())).extractall("./"+directory)
+		ZipFile(StringIO(url.read())).extractall("./" + directory)
 
-	temp.write(city + ',' + version + ',' + link + '\n')
+	temp.write(city + ',' + version + ','  + startdate + ',' + enddate + ',' + link + '\n')
