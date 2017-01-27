@@ -23,21 +23,34 @@ def webscrape():
 		map_data = []
 		temp = open("temp", 'w+')
 		temp.truncate()
-
+		
 		downloader = urllib.URLopener()
 		for row in table.find_all('tr')[1:]:
 			col = row.find_all('td')
 			city = col[0].string.strip()
-
 			link = col[1].find('a').get('href')
 			version = col[1].get_text().split()
-			version = version[0]
-			temp.write(city + ',' + version + ',' + link + '\n')
+			version[4] = version[4][0:4]
+			startDate = ' '.join(version[2:5])		
+			version = version[0].strip()
+			
+			m = col[2].get_text().split()
+			m[4] = m[4][0:4]
+			endDate = ' '.join(m[2:5])
+			
+			temp.write(city + ',' + version + ',' + startDate +','+ endDate +',' + link + '\n')
 
 
 			filePath = "./"+ city +"/"+ version +"/"
 			fileName = filePath + city + version + ".zip"
 			
+			if os.path.isdir("./"+ city):
+				for file in os.listdir("./"+ city):
+					if version in file:
+						continue
+					else:
+						shutil.rmtree("./"+ city +"/"+file)
+						
 			if not os.path.isdir(filePath):
 				os.mkdir(city, 0o777)
 				os.mkdir(city +"/"+ version, 0o777)
@@ -78,7 +91,6 @@ def tileWithGDAL(fName, fPath, zipName):
 		if os.path.isfile(os.path.join(fPath, file)):
 			os.remove(os.path.join(fPath, file))
 	os.chmod('translated', 0o777)
-	shutil.make_archive(zipName[1:], 'zip', 'translated/')
 	
 	zipf = zipfile.ZipFile(zipName, 'w', zipfile.ZIP_DEFLATED)
 	for root, dirs, files in os.walk('translated/'):
