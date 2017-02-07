@@ -44,20 +44,20 @@ def webscrape():
 
 			temp.write(city + ',' + version + ',' + startDate +','+ endDate +','+ sectional +'\n')
 
-			filePath = "./"+ city +"/"+ version +"/"
-			fileName = filePath + city + version + ".zip"
+			filePath = "./"+ sectional +"/"+ version +"/"
+			fileName = filePath + sectional + version + ".zip"
 
-			if os.path.isdir("./"+ city):
-				for file in os.listdir("./"+ city):
+			if os.path.isdir("./"+ sectional):
+				for file in os.listdir("./"+ sectional):
 					if version in file:
 						break
 					else:
-						shutil.rmtree("./"+ city)
+						shutil.rmtree("./"+ sectional)
 						break
 
 			if not os.path.isdir(filePath):
-				os.mkdir(city, 0o777)
-				os.mkdir(city +"/"+ version, 0o777)
+				os.mkdir(sectional, 0o777)
+				os.mkdir(sectional +"/"+ version, 0o777)
 				downloader.retrieve(link, fileName)
 
 				unzip = zipfile.ZipFile(fileName, 'r')
@@ -72,11 +72,11 @@ def webscrape():
 						tifFileName = file
 				gdalFileName = filePath + tifFileName
 
-		       		model = open("./"+city +"/" + city +"model", 'w+')
+		       		model = open("./"+ sectional +"/" + sectional +"model", 'w+')
 	       			model.truncate()
        				model.write(city + ',' + version + ',' + startDate +','+ endDate +','+ sectional +'\n')
-				zipname = filePath + city + ".zip"
-				tileWithGDAL(gdalFileName, filePath, zipname)
+				zipname = filePath + sectional + ".zip"
+				#tileWithGDAL(gdalFileName, filePath, zipname)
 
 	except Exception, e:
 #		server = smtplib.SMTP('smtp.gmail.com', 587)
