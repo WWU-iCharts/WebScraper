@@ -76,7 +76,7 @@ def webscrape():
 	       			model.truncate()
        				model.write(city + ',' + version + ',' + startDate +','+ endDate +','+ sectional +'\n')
 				zipname = filePath + sectional + ".zip"
-				#tileWithGDAL(gdalFileName, filePath, zipname)
+				tileWithGDAL(gdalFileName, filePath, zipname)
 
 	except Exception, e:
 #		server = smtplib.SMTP('smtp.gmail.com', 587)
