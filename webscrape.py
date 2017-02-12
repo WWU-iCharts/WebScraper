@@ -94,7 +94,7 @@ def webscrape():
 # A .tif should exist in the file path when this is called.
 def tileWithGDAL(fName, fPath, zipName):
 	os.system("gdal_translate -of vrt -expand rgba '"+ fName +"' '"+ fPath +"translated.vrt'")
-	os.system("gdal2tiles.py -z 4-6 -p 'raster' '"+ fPath +"translated.vrt'")
+	os.system("gdal2tiles.py -p 'raster' '"+ fPath +"translated.vrt'")
 	for file in os.listdir(fPath):
 		if os.path.isfile(os.path.join(fPath, file)):
 			os.remove(os.path.join(fPath, file))
@@ -102,6 +102,8 @@ def tileWithGDAL(fName, fPath, zipName):
 
 	zipf = zipfile.ZipFile(zipName, 'w', zipfile.ZIP_DEFLATED)
 	for root, dirs, files in os.walk('translated/'):
+		if root == "translated/":
+			dirs[:] = [d for d in dirs if any(strings in d for strings in ('4','5','6'))]
 		for file in files:
 			if 'openlayers.html' not in file and 'tilemapresource.xml' not in file:
 				zipf.write(os.path.join(root, file))
