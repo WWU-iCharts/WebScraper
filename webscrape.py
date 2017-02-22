@@ -26,9 +26,9 @@ def webscrape():
 
 		downloader = urllib.URLopener()
 		i = 0
-		for row in table.find_all('tr')[1:5]:
+		for row in table.find_all('tr')[1:]:
 			col = row.find_all('td')
-			city = col[0].string.strip()
+			city = col[0].get_text().strip()
 			link = col[1].find('a').get('href')
 			sectional = sectionalData[i]
 			i += 1
@@ -55,19 +55,19 @@ def webscrape():
 			if not os.path.isdir(filePath):
 				os.mkdir(sectional, 0o777)
 				os.mkdir(sectional +"/"+ version, 0o777)
-				downloader.retrieve(link, fileName)
+			#	downloader.retrieve(link, fileName)
 
-				unzip = zipfile.ZipFile(fileName, 'r')
-				unzip.extractall(filePath)
-				unzip.close()
+			#	unzip = zipfile.ZipFile(fileName, 'r')
+			#	unzip.extractall(filePath)
+			#	unzip.close()
 
-				os.remove(fileName)
+			#	os.remove(fileName)
 
-				tifFileName = ""
-				for file in os.listdir(filePath):
-					if file.endswith(".tif"):
-						tifFileName = file
-				gdalFileName = filePath + tifFileName
+			#	tifFileName = ""
+			#	for file in os.listdir(filePath):
+			#		if file.endswith(".tif"):
+			#			tifFileName = file
+			#	gdalFileName = filePath + tifFileName
 
 		       		modelfile = open("./"+ sectional +"/" + sectional +"model.json", 'w+')
 	       			modelfile.truncate()
@@ -84,7 +84,7 @@ def webscrape():
 				modelfile.close
 
 				zipname = filePath + sectional + ".zip"
-				tileWithGDAL(gdalFileName, filePath, zipname)
+			#	tileWithGDAL(gdalFileName, filePath, zipname)
 
 	except Exception, e:
 		print e
