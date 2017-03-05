@@ -7,6 +7,7 @@ import smtplib
 import zipfile
 import urllib
 import os, shutil
+import json
 
 def webscrape():
 	#Error handling if FAA website has changed
@@ -22,14 +23,12 @@ def webscrape():
 
 		#Put city,version and download link into temp file
 		map_data = []
-		temp = open("database", 'w+')
-		temp.truncate()
 
 		downloader = urllib.URLopener()
 		i = 0
 		for row in table.find_all('tr')[1:]:
 			col = row.find_all('td')
-			city = col[0].string.strip()
+			city = col[0].get_text().strip()
 			link = col[1].find('a').get('href')
 			sectional = sectionalData[i]
 			i += 1
@@ -41,8 +40,6 @@ def webscrape():
 			m = col[2].get_text().split()
 			m[4] = m[4][0:4]
 			endDate = ' '.join(m[2:5])
-
-			temp.write(city + ',' + version + ',' + startDate +','+ endDate +','+ sectional +'\n')
 
 			filePath = "./"+ sectional +"/"+ version +"/"
 			fileName = filePath + sectional + version + ".zip"
@@ -72,23 +69,25 @@ def webscrape():
 						tifFileName = file
 				gdalFileName = filePath + tifFileName
 
-		       		model = open("./"+ sectional +"/" + sectional +"model", 'w+')
-	       			model.truncate()
-       				model.write(city + ',' + version + ',' + startDate +','+ endDate +','+ sectional +'\n')
 				zipname = filePath + sectional + ".zip"
 				tileWithGDAL(gdalFileName, filePath, zipname)
 
+				modelfile = open(filePath + sectional +"model.json", 'w+')
+				modelfile.truncate()
+				model = {
+					'city' : city,
+					'version' : version,
+					'publication' : startDate,
+					'expiration' : endDate,
+					'RegionID' : sectional
+				}
+
+				json_model = json.dumps(model)
+				modelfile.write(json_model)
+				modelfile.close
+				
 	except Exception, e:
-#		server = smtplib.SMTP('smtp.gmail.com', 587)
-
-#		server.ehlo()
-#		server.starttls()
-#		server.ehlo()
-
-#		server.login("ichartgroup@gmail.com", "icharts321")
-#		msg = "Webscraper Failed: "
 		print e
-	#	server.sendmail("ichartgroup@gmail.com", "walker60@wwu.edu", msg)
 		return
 
 # A .tif should exist in the file path when this is called.
@@ -106,7 +105,7 @@ def tileWithGDAL(fName, fPath, zipName):
 			dirs[:] = [d for d in dirs if any(strings in d for strings in ('4','5','6'))]
 		for file in files:
 			if 'openlayers.html' not in file and 'tilemapresource.xml' not in file:
-				zipf.write(os.path.join(root, file))
+				zipf.write(os.path.join(root, file), os.path.join(root, file)[11:])
 	shutil.rmtree('./translated')
 
 def buildSectional():
@@ -121,5 +120,5 @@ def buildSectional():
 		col = row.find_all('td')
 		sectional.append(col[1].string.strip()[1:])
 	return sectional
-		
+
 webscrape()
