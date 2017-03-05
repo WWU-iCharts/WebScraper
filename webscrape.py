@@ -79,7 +79,7 @@ def webscrape():
 					'version' : version,
 					'publication' : startDate,
 					'expiration' : endDate,
-					'RegionID' : sectional
+					'regionId' : sectional
 				}
 
 				json_model = json.dumps(model)
