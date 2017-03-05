@@ -69,8 +69,11 @@ def webscrape():
 						tifFileName = file
 				gdalFileName = filePath + tifFileName
 
-		       		modelfile = open("./"+ sectional +"/" + sectional +"model.json", 'w+')
-	       			modelfile.truncate()
+				zipname = filePath + sectional + ".zip"
+				tileWithGDAL(gdalFileName, filePath, zipname)
+
+				modelfile = open(filePath + sectional +"model.json", 'w+')
+				modelfile.truncate()
 				model = {
 					'city' : city,
 					'version' : version,
@@ -82,10 +85,7 @@ def webscrape():
 				json_model = json.dumps(model)
 				modelfile.write(json_model)
 				modelfile.close
-
-				zipname = filePath + sectional + ".zip"
-				tileWithGDAL(gdalFileName, filePath, zipname)
-
+				
 	except Exception, e:
 		print e
 		return
@@ -105,7 +105,7 @@ def tileWithGDAL(fName, fPath, zipName):
 			dirs[:] = [d for d in dirs if any(strings in d for strings in ('4','5','6'))]
 		for file in files:
 			if 'openlayers.html' not in file and 'tilemapresource.xml' not in file:
-				zipf.write(os.path.join(root, file))
+				zipf.write(os.path.join(root, file), os.path.join(root, file)[11:])
 	shutil.rmtree('./translated')
 
 def buildSectional():
