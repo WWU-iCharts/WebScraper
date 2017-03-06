@@ -77,8 +77,8 @@ def webscrape():
 				model = {
 					'city' : city,
 					'version' : version,
-					'publication' : startDate,
-					'expiration' : endDate,
+					'publicationDate' : startDate,
+					'expirationDate' : endDate,
 					'regionId' : sectional
 				}
 
